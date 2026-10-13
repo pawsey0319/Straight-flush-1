@@ -18,8 +18,8 @@
           </div>
         </div>
         <div class="topbar-actions">
-          <span class="snapshot-pill"><i></i> 演示数据快照</span>
-          <button class="icon-button" id="complianceButton" title="查看边界说明">?</button>
+          <button class="snapshot-pill mode-button" id="dataModeButton" type="button" aria-pressed="false"><i></i><span id="dataModeLabel">演示数据快照</span></button>
+          <button class="icon-button" id="complianceButton" title="查看边界说明" aria-label="查看产品边界说明">?</button>
           <div class="avatar">P</div>
         </div>
       </header>
@@ -34,7 +34,7 @@
           <div class="hero-meta">
             <div class="meta-label">当前策略</div>
             <div class="meta-value">盈利改善 · 合理估值 · 稳定走势</div>
-            <div class="meta-small">策略版本 v1.3 · 最近运行 2026-10-12 15:02</div>
+            <div class="meta-small" id="strategyMeta">策略版本 v1.3 · 尚未运行实时策略</div>
           </div>
         </section>
 
@@ -54,13 +54,14 @@
               <span class="section-kicker">01 / 自然语言意图</span>
               <h2>你想找什么样的股票？</h2>
             </div>
-            <button class="text-button" id="resetDemo">恢复示例</button>
+            <button class="text-button" id="resetDemo" type="button">恢复示例</button>
           </div>
           <div class="intent-input-wrap">
             <textarea id="intentInput" rows="2" aria-label="自然语言选股意图">找经营改善、估值合理、走势相对稳定的 A 股。</textarea>
-            <button class="primary-button" id="parseButton"><span class="sparkle">✦</span> 重新解析</button>
+            <button class="primary-button" id="parseButton" type="button"><span class="sparkle">✦</span> 重新解析</button>
           </div>
-          <div class="intent-footnote"><span class="status-dot green"></span> 已识别 3 个语义概念 · 尚有 0 个阻塞项 · 当前输入不会自动补出未确认阈值</div>
+          <div class="intent-footnote" id="intentStatus" aria-live="polite"><span class="status-dot green"></span> 示例策略已加载 · 点击“重新解析”调用 AI，未确认概念不会自动进入执行层</div>
+          <div class="memory-strip" id="memoryStrip" role="status" aria-live="polite" hidden></div>
         </section>
 
         <div class="workspace-grid">
@@ -70,7 +71,7 @@
                 <span class="section-kicker">02 / 语义澄清</span>
                 <h2>先确认“你说的意思”</h2>
               </div>
-              <span class="confidence-label"><span class="status-dot green"></span> AI 识别完成</span>
+              <span class="confidence-label" id="parseStatus"><span class="status-dot amber"></span> 等待解析</span>
             </div>
             <p class="section-description">模糊概念保留在语义层，只有你确认后的指标和阈值才会进入执行层。</p>
 
@@ -83,9 +84,9 @@
                 </div>
                 <p>企业的收入、利润、盈利能力、现金流或经营效率相比过去变好。</p>
                 <div class="definition-options">
-                  <button class="definition-chip selected" data-definition="growth">增长型</button>
-                  <button class="definition-chip" data-definition="profitability">盈利能力型</button>
-                  <button class="definition-chip" data-definition="cashflow">现金流型</button>
+                  <button class="definition-chip selected" type="button" data-definition="growth">增长型</button>
+                  <button class="definition-chip" type="button" data-definition="profitability">盈利能力型</button>
+                  <button class="definition-chip" type="button" data-definition="cashflow">现金流型</button>
                 </div>
                 <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · 仅用于当前策略版本</div>
               </article>
@@ -98,9 +99,9 @@
                 </div>
                 <p>当前价格相对于企业价值不贵，用绝对阈值与历史分位共同定义。</p>
                 <div class="definition-options">
-                  <button class="definition-chip selected" data-definition="absolute">绝对阈值</button>
-                  <button class="definition-chip" data-definition="industry">行业相对</button>
-                  <button class="definition-chip" data-definition="history">历史相对</button>
+                  <button class="definition-chip selected" type="button" data-definition="absolute">绝对阈值</button>
+                  <button class="definition-chip" type="button" data-definition="industry">行业相对</button>
+                  <button class="definition-chip" type="button" data-definition="history">历史相对</button>
                 </div>
                 <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · PE(TTM) ≤ 35 + 历史分位 ≤ 60%</div>
               </article>
@@ -113,14 +114,17 @@
                 </div>
                 <p>在选定窗口内价格波动和回撤较小，使用 60 日年化波动率衡量。</p>
                 <div class="definition-options">
-                  <button class="definition-chip selected" data-definition="volatility">波动率</button>
-                  <button class="definition-chip" data-definition="drawdown">最大回撤</button>
-                  <button class="definition-chip" data-definition="relative">相对基准</button>
+                  <button class="definition-chip selected" type="button" data-definition="volatility">波动率</button>
+                  <button class="definition-chip" type="button" data-definition="drawdown">最大回撤</button>
+                  <button class="definition-chip" type="button" data-definition="relative">相对基准</button>
                 </div>
                 <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · 60 日年化波动率 ≤ 28%</div>
               </article>
             </div>
-            <button class="secondary-button full-width" id="clarifyButton">查看定义解释与口径来源</button>
+            <div class="semantic-actions">
+              <button class="secondary-button" id="clarifyButton" type="button" aria-controls="knowledgeBackdrop" aria-haspopup="dialog">打开基础知识浮窗</button>
+              <button class="secondary-button" id="memoryButton" type="button" aria-controls="memoryBackdrop" aria-haspopup="dialog">查看我的口径 <span id="memoryCount">0</span></button>
+            </div>
           </section>
 
           <section class="panel condition-panel">
@@ -134,54 +138,54 @@
             <div class="condition-alert"><span class="alert-icon">✓</span><div><strong>条件已通过确定性校验</strong><span>没有硬冲突；缺失数据将标记为 unknown，不会自动通过。</span></div></div>
 
             <div class="condition-group">
-              <div class="condition-group-title"><span class="group-marker coral"></span><strong>经营改善</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-group-title"><span class="group-marker coral"></span><strong>经营改善</strong><span class="origin-tag">user_confirmed</span><button class="more-button" type="button" aria-label="经营改善条件更多操作">⋯</button></div>
               <div class="condition-row">
                 <div><strong>营业收入同比</strong><small>latest four quarters · pct</small></div>
                 <select aria-label="营业收入同比操作符"><option>≥</option></select>
-                <input class="threshold-input" data-condition="revenue" type="number" value="10" min="0" max="100" />
+                <input class="threshold-input" data-condition="revenue" aria-label="营业收入同比阈值" type="number" value="10" min="0" max="100" />
                 <span class="unit">%</span>
                 <span class="source-tag">扶摇快照</span>
               </div>
               <div class="condition-row">
                 <div><strong>归母净利润同比</strong><small>latest four quarters · pct</small></div>
                 <select aria-label="归母净利润同比操作符"><option>≥</option></select>
-                <input class="threshold-input" data-condition="profit" type="number" value="10" min="0" max="100" />
+                <input class="threshold-input" data-condition="profit" aria-label="归母净利润同比阈值" type="number" value="10" min="0" max="100" />
                 <span class="unit">%</span>
                 <span class="source-tag">扶摇快照</span>
               </div>
             </div>
 
             <div class="condition-group">
-              <div class="condition-group-title"><span class="group-marker blue"></span><strong>估值合理</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-group-title"><span class="group-marker blue"></span><strong>估值合理</strong><span class="origin-tag">user_confirmed</span><button class="more-button" type="button" aria-label="估值合理条件更多操作">⋯</button></div>
               <div class="condition-row">
                 <div><strong>PE（TTM）</strong><small>latest complete trading day · x</small></div>
                 <select aria-label="PE操作符"><option>≤</option></select>
-                <input class="threshold-input" data-condition="pe" type="number" value="35" min="1" max="300" />
+                <input class="threshold-input" data-condition="pe" aria-label="PE TTM 阈值" type="number" value="35" min="1" max="300" />
                 <span class="unit">x</span>
                 <span class="source-tag">估值快照</span>
               </div>
               <div class="condition-row">
                 <div><strong>PE 历史分位</strong><small>5-year lookback · pctile</small></div>
                 <select aria-label="历史分位操作符"><option>≤</option></select>
-                <input class="threshold-input" data-condition="percentile" type="number" value="60" min="1" max="100" />
+                <input class="threshold-input" data-condition="percentile" aria-label="PE 历史分位阈值" type="number" value="60" min="1" max="100" />
                 <span class="unit">%</span>
                 <span class="source-tag">估值快照</span>
               </div>
             </div>
 
             <div class="condition-group">
-              <div class="condition-group-title"><span class="group-marker violet"></span><strong>走势稳定</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-group-title"><span class="group-marker violet"></span><strong>走势稳定</strong><span class="origin-tag">user_confirmed</span><button class="more-button" type="button" aria-label="走势稳定条件更多操作">⋯</button></div>
               <div class="condition-row">
                 <div><strong>60 日年化波动率</strong><small>60 trading days · annualized pct</small></div>
                 <select aria-label="波动率操作符"><option>≤</option></select>
-                <input class="threshold-input" data-condition="volatility" type="number" value="28" min="1" max="100" />
+                <input class="threshold-input" data-condition="volatility" aria-label="60 日年化波动率阈值" type="number" value="28" min="1" max="100" />
                 <span class="unit">%</span>
                 <span class="source-tag">行情快照</span>
               </div>
             </div>
 
             <div class="condition-footer"><span><i class="tiny-check">✓</i> A 股普通股</span><span><i class="tiny-check">✓</i> 排除 ST、停牌</span><span><i class="tiny-check">✓</i> 缺失值 = unknown</span></div>
-            <button class="run-button" id="runButton"><span>运行策略</span><span class="run-arrow">→</span></button>
+            <button class="run-button" id="runButton" type="button"><span>运行策略</span><span class="run-arrow">→</span></button>
           </section>
         </div>
 
@@ -191,28 +195,29 @@
               <span class="section-kicker">04 / 执行与解释</span>
               <h2>筛选结果</h2>
             </div>
-            <div class="results-actions"><span class="run-meta"><span class="status-dot green"></span> 运行完成 · 2026-10-12 15:02 · 6.4s</span><button class="secondary-button" id="saveButton">保存策略</button><button class="secondary-button" id="monitorButton">创建监控</button></div>
+            <div class="results-actions"><span class="run-meta" id="runMeta" aria-live="polite"><span class="status-dot green"></span> 演示结果已加载</span><button class="secondary-button" id="saveButton" type="button">保存策略</button><button class="secondary-button" id="monitorButton" type="button">创建监控</button></div>
           </div>
           <div class="result-summary">
-            <div class="summary-card selected-summary"><span class="summary-label">入选</span><strong>4</strong><span>通过全部硬条件</span></div>
-            <div class="summary-card excluded-summary"><span class="summary-label">排除</span><strong>3</strong><span>至少一个条件未满足</span></div>
-            <div class="summary-card unknown-summary"><span class="summary-label">未知</span><strong>2</strong><span>数据不足或接口异常</span></div>
-            <div class="summary-card data-summary"><span class="summary-label">数据质量</span><strong>92<span>%</span></strong><span>字段可追溯率</span></div>
+            <div class="summary-card selected-summary"><span class="summary-label">入选</span><strong id="selectedCount">4</strong><span>通过全部硬条件</span></div>
+            <div class="summary-card excluded-summary"><span class="summary-label">排除</span><strong id="excludedCount">3</strong><span>至少一个条件未满足</span></div>
+            <div class="summary-card unknown-summary"><span class="summary-label">未知</span><strong id="unknownCount">2</strong><span>数据不足或接口异常</span></div>
+            <div class="summary-card data-summary"><span class="summary-label">数据质量</span><strong id="qualityCount">92<span>%</span></strong><span>字段可追溯率</span></div>
           </div>
 
           <div class="result-layout">
             <div class="result-list-area">
-              <div class="tab-row"><button class="tab-button active" data-tab="selected">入选 <span>4</span></button><button class="tab-button" data-tab="excluded">排除 <span>3</span></button><button class="tab-button" data-tab="unknown">数据质量 <span>2</span></button></div>
-              <div class="table-wrap">
-                <table class="stock-table">
-                  <thead><tr><th>证券</th><th>经营改善</th><th>估值</th><th>走势稳定</th><th>数据时点</th><th></th></tr></thead>
+              <div class="tab-row" role="tablist" aria-label="筛选结果分类"><button class="tab-button active" data-tab="selected" role="tab" aria-selected="true">入选 <span>4</span></button><button class="tab-button" data-tab="excluded" role="tab" aria-selected="false">排除 <span>3</span></button><button class="tab-button" data-tab="unknown" role="tab" aria-selected="false">数据质量 <span>2</span></button></div>
+              <div class="table-wrap" tabindex="0" aria-label="股票结果表，可横向滚动查看">
+                <table class="stock-table" aria-label="股票筛选结果">
+                  <thead><tr><th scope="col">证券</th><th scope="col">经营改善</th><th scope="col">估值</th><th scope="col">走势稳定</th><th scope="col">数据时点</th><th scope="col"><span class="sr-only">查看证据</span></th></tr></thead>
                   <tbody id="stockTableBody"></tbody>
                 </table>
               </div>
+              <p class="table-scroll-hint" aria-hidden="true">左右滑动查看完整结果</p>
               <div class="list-footnote"><span class="status-dot amber"></span> 结果基于演示快照；实际接入供应商后需替换数据适配器并保留原始响应。</div>
             </div>
-            <aside class="evidence-panel" id="evidencePanel">
-              <div class="evidence-heading"><div><span class="section-kicker">证据账本</span><h3 id="evidenceTitle">贵州茅台 <span>600519.SH</span></h3></div><button class="close-evidence" id="closeEvidence">×</button></div>
+            <aside class="evidence-panel" id="evidencePanel" aria-label="股票证据账本" aria-live="polite">
+              <div class="evidence-heading"><div><span class="section-kicker">证据账本</span><h3 id="evidenceTitle">贵州茅台 <span>600519.SH</span></h3></div><button class="close-evidence" id="closeEvidence" type="button" aria-label="关闭证据账本">×</button></div>
               <div class="evidence-status"><span class="status-dot green"></span><strong id="evidenceStatus">入选</strong><span>5 / 5 条件通过</span></div>
               <p id="evidenceSummary">经营改善与估值条件均满足当前策略口径，波动率处于控制范围内。</p>
               <div class="evidence-facts" id="evidenceFacts"></div>
@@ -239,14 +244,31 @@
           </section>
         </section>
 
-        <footer class="footer-note"><span>Demo 说明</span> 本产品展示“条件筛选与证据解释”，不提供确定性涨跌预测、收益承诺或直接买卖建议。演示快照仅用于体验主链路。</footer>
+        <footer class="footer-note"><span>产品说明</span> 实时模式只使用服务端扶摇数据；演示模式使用固定快照。本产品展示“条件筛选与证据解释”，不提供确定性涨跌预测、收益承诺或直接买卖建议。</footer>
       </main>
     </div>
 
     <div class="toast" id="toast" role="status"></div>
+    <button class="knowledge-fab" id="knowledgeFab" type="button" aria-label="打开基础知识浮窗" aria-controls="knowledgeBackdrop" aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true">?</span><small aria-hidden="true">基础知识</small></button>
+
+    <div class="knowledge-backdrop" id="knowledgeBackdrop" hidden>
+      <aside class="knowledge-drawer" id="knowledgeDrawer" role="dialog" aria-modal="true" aria-labelledby="knowledgeTitle" aria-describedby="knowledgeDescription" tabindex="-1">
+        <div class="knowledge-header"><div><span class="section-kicker">基础知识助手</span><h2 id="knowledgeTitle">先理解，再决定口径</h2></div><button class="modal-close" id="knowledgeClose" type="button" aria-label="关闭基础知识浮窗">×</button></div>
+        <p class="sr-only" id="knowledgeDescription">这是独立的基础知识浮窗。查询结果不会自动修改主策略，只有点击应用或记住后才会产生变化。</p>
+        <div class="knowledge-context" id="knowledgeContext">当前概念：经营改善</div>
+        <div class="knowledge-body" id="knowledgeBody" aria-live="polite"><h3>经营改善</h3><p>可以从增长、盈利能力、现金流或组合口径理解。你可以直接提问，答案不会自动修改当前策略。</p><div class="knowledge-definition-grid"><button type="button" data-knowledge-definition="growth">增长型</button><button type="button" data-knowledge-definition="profitability">盈利能力型</button><button type="button" data-knowledge-definition="cashflow">现金流型</button></div></div>
+        <form class="knowledge-form" id="knowledgeForm"><label for="knowledgeQuestion">继续提问</label><div><input id="knowledgeQuestion" autocomplete="off" placeholder="例如：PE 历史分位怎么理解？" /><button class="primary-button" type="submit">提问</button></div></form>
+        <div class="knowledge-actions"><button class="secondary-button" id="applyKnowledge" type="button">应用到策略</button><button class="secondary-button" id="rememberKnowledge" type="button">记住这个口径</button></div>
+      </aside>
+    </div>
+
+    <div class="memory-backdrop" id="memoryBackdrop" hidden>
+      <aside class="memory-drawer" id="memoryDrawer" role="dialog" aria-modal="true" aria-labelledby="memoryTitle" aria-describedby="memoryDescription" tabindex="-1"><div class="knowledge-header"><div><span class="section-kicker">结构化记忆</span><h2 id="memoryTitle">你的历史口径</h2></div><button class="modal-close" id="memoryClose" type="button" aria-label="关闭结构化记忆">×</button></div><p class="sr-only" id="memoryDescription">这里展示你明确确认过的结构化口径，可以单独删除某条记忆或清除全部匿名记忆。</p><p class="memory-intro">只保存你明确确认过的概念、指标和阈值，不保存账户或持仓信息。</p><div id="memoryList" class="memory-list" aria-live="polite"></div><button class="secondary-button full-width" id="clearMemory" type="button">删除全部匿名记忆</button></aside>
+    </div>
+
     <div class="modal-backdrop" id="modalBackdrop" hidden>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <button class="modal-close" id="modalClose">×</button>
+        <button class="modal-close" id="modalClose" type="button" aria-label="关闭产品边界说明">×</button>
         <span class="section-kicker">产品边界</span>
         <h2 id="modalTitle">为什么结果里会出现“未知”？</h2>
         <p>“未知”代表系统拿不到足够可靠的数据来判断条件，例如字段缺失、窗口不足、接口失败或来源冲突。它不会被静默算成通过或排除。</p>
