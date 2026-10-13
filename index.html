@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="澄明选股：把自然语言选股意图转成可检查、可修改、可追溯的结构化策略。" />
+    <title>澄明选股 · 自然语言策略解释器</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark"><span></span><span></span><span></span></div>
+          <div>
+            <div class="brand-name">澄明选股</div>
+            <div class="brand-subtitle">Natural language → traceable strategy</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <span class="snapshot-pill"><i></i> 演示数据快照</span>
+          <button class="icon-button" id="complianceButton" title="查看边界说明">?</button>
+          <div class="avatar">P</div>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <section class="hero-row">
+          <div>
+            <p class="eyebrow">STRATEGY WORKBENCH <span>·</span> 策略工作台</p>
+            <h1>把一句模糊意图，变成一套可检查的选股策略。</h1>
+            <p class="hero-copy">AI 负责理解和澄清，确定性引擎负责计算和筛选。每个关键数字都带有来源、时点、单位和数据质量状态。</p>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-label">当前策略</div>
+            <div class="meta-value">盈利改善 · 合理估值 · 稳定走势</div>
+            <div class="meta-small">策略版本 v1.3 · 最近运行 2026-10-12 15:02</div>
+          </div>
+        </section>
+
+        <section class="progress-track" aria-label="策略流程">
+          <div class="progress-step is-done"><span>01</span><div><strong>意图澄清</strong><small>理解模糊概念</small></div></div>
+          <div class="progress-line is-done"></div>
+          <div class="progress-step is-done"><span>02</span><div><strong>条件确认</strong><small>用户可检查、可修改</small></div></div>
+          <div class="progress-line is-done"></div>
+          <div class="progress-step is-active"><span>03</span><div><strong>执行与解释</strong><small>证据驱动的结果</small></div></div>
+          <div class="progress-line"></div>
+          <div class="progress-step"><span>04</span><div><strong>保存与监控</strong><small>保留策略版本</small></div></div>
+        </section>
+
+        <section class="intent-card panel">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="section-kicker">01 / 自然语言意图</span>
+              <h2>你想找什么样的股票？</h2>
+            </div>
+            <button class="text-button" id="resetDemo">恢复示例</button>
+          </div>
+          <div class="intent-input-wrap">
+            <textarea id="intentInput" rows="2" aria-label="自然语言选股意图">找经营改善、估值合理、走势相对稳定的 A 股。</textarea>
+            <button class="primary-button" id="parseButton"><span class="sparkle">✦</span> 重新解析</button>
+          </div>
+          <div class="intent-footnote"><span class="status-dot green"></span> 已识别 3 个语义概念 · 尚有 0 个阻塞项 · 当前输入不会自动补出未确认阈值</div>
+        </section>
+
+        <div class="workspace-grid">
+          <section class="panel semantic-panel">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">02 / 语义澄清</span>
+                <h2>先确认“你说的意思”</h2>
+              </div>
+              <span class="confidence-label"><span class="status-dot green"></span> AI 识别完成</span>
+            </div>
+            <p class="section-description">模糊概念保留在语义层，只有你确认后的指标和阈值才会进入执行层。</p>
+
+            <div class="semantic-list" id="semanticList">
+              <article class="semantic-card is-confirmed" data-concept="operating">
+                <div class="semantic-card-top">
+                  <div class="concept-icon coral">↗</div>
+                  <div class="concept-title"><h3>经营改善</h3><span>语义置信度 96%</span></div>
+                  <span class="state-badge confirmed">已确认</span>
+                </div>
+                <p>企业的收入、利润、盈利能力、现金流或经营效率相比过去变好。</p>
+                <div class="definition-options">
+                  <button class="definition-chip selected" data-definition="growth">增长型</button>
+                  <button class="definition-chip" data-definition="profitability">盈利能力型</button>
+                  <button class="definition-chip" data-definition="cashflow">现金流型</button>
+                </div>
+                <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · 仅用于当前策略版本</div>
+              </article>
+
+              <article class="semantic-card is-confirmed" data-concept="valuation">
+                <div class="semantic-card-top">
+                  <div class="concept-icon blue">⌁</div>
+                  <div class="concept-title"><h3>估值合理</h3><span>语义置信度 94%</span></div>
+                  <span class="state-badge confirmed">已确认</span>
+                </div>
+                <p>当前价格相对于企业价值不贵，用绝对阈值与历史分位共同定义。</p>
+                <div class="definition-options">
+                  <button class="definition-chip selected" data-definition="absolute">绝对阈值</button>
+                  <button class="definition-chip" data-definition="industry">行业相对</button>
+                  <button class="definition-chip" data-definition="history">历史相对</button>
+                </div>
+                <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · PE(TTM) ≤ 35 + 历史分位 ≤ 60%</div>
+              </article>
+
+              <article class="semantic-card is-confirmed" data-concept="stability">
+                <div class="semantic-card-top">
+                  <div class="concept-icon violet">≈</div>
+                  <div class="concept-title"><h3>走势相对稳定</h3><span>语义置信度 91%</span></div>
+                  <span class="state-badge confirmed">已确认</span>
+                </div>
+                <p>在选定窗口内价格波动和回撤较小，使用 60 日年化波动率衡量。</p>
+                <div class="definition-options">
+                  <button class="definition-chip selected" data-definition="volatility">波动率</button>
+                  <button class="definition-chip" data-definition="drawdown">最大回撤</button>
+                  <button class="definition-chip" data-definition="relative">相对基准</button>
+                </div>
+                <div class="memory-note"><span class="memory-icon">◌</span> 本次确认 · 60 日年化波动率 ≤ 28%</div>
+              </article>
+            </div>
+            <button class="secondary-button full-width" id="clarifyButton">查看定义解释与口径来源</button>
+          </section>
+
+          <section class="panel condition-panel">
+            <div class="section-heading">
+              <div>
+                <span class="section-kicker">03 / 可执行条件</span>
+                <h2>策略条件</h2>
+              </div>
+              <span class="ir-badge">Strategy IR · v1.3</span>
+            </div>
+            <div class="condition-alert"><span class="alert-icon">✓</span><div><strong>条件已通过确定性校验</strong><span>没有硬冲突；缺失数据将标记为 unknown，不会自动通过。</span></div></div>
+
+            <div class="condition-group">
+              <div class="condition-group-title"><span class="group-marker coral"></span><strong>经营改善</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-row">
+                <div><strong>营业收入同比</strong><small>latest four quarters · pct</small></div>
+                <select aria-label="营业收入同比操作符"><option>≥</option></select>
+                <input class="threshold-input" data-condition="revenue" type="number" value="10" min="0" max="100" />
+                <span class="unit">%</span>
+                <span class="source-tag">扶摇快照</span>
+              </div>
+              <div class="condition-row">
+                <div><strong>归母净利润同比</strong><small>latest four quarters · pct</small></div>
+                <select aria-label="归母净利润同比操作符"><option>≥</option></select>
+                <input class="threshold-input" data-condition="profit" type="number" value="10" min="0" max="100" />
+                <span class="unit">%</span>
+                <span class="source-tag">扶摇快照</span>
+              </div>
+            </div>
+
+            <div class="condition-group">
+              <div class="condition-group-title"><span class="group-marker blue"></span><strong>估值合理</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-row">
+                <div><strong>PE（TTM）</strong><small>latest complete trading day · x</small></div>
+                <select aria-label="PE操作符"><option>≤</option></select>
+                <input class="threshold-input" data-condition="pe" type="number" value="35" min="1" max="300" />
+                <span class="unit">x</span>
+                <span class="source-tag">估值快照</span>
+              </div>
+              <div class="condition-row">
+                <div><strong>PE 历史分位</strong><small>5-year lookback · pctile</small></div>
+                <select aria-label="历史分位操作符"><option>≤</option></select>
+                <input class="threshold-input" data-condition="percentile" type="number" value="60" min="1" max="100" />
+                <span class="unit">%</span>
+                <span class="source-tag">估值快照</span>
+              </div>
+            </div>
+
+            <div class="condition-group">
+              <div class="condition-group-title"><span class="group-marker violet"></span><strong>走势稳定</strong><span class="origin-tag">user_confirmed</span><button class="more-button">⋯</button></div>
+              <div class="condition-row">
+                <div><strong>60 日年化波动率</strong><small>60 trading days · annualized pct</small></div>
+                <select aria-label="波动率操作符"><option>≤</option></select>
+                <input class="threshold-input" data-condition="volatility" type="number" value="28" min="1" max="100" />
+                <span class="unit">%</span>
+                <span class="source-tag">行情快照</span>
+              </div>
+            </div>
+
+            <div class="condition-footer"><span><i class="tiny-check">✓</i> A 股普通股</span><span><i class="tiny-check">✓</i> 排除 ST、停牌</span><span><i class="tiny-check">✓</i> 缺失值 = unknown</span></div>
+            <button class="run-button" id="runButton"><span>运行策略</span><span class="run-arrow">→</span></button>
+          </section>
+        </div>
+
+        <section class="results-panel panel" id="resultsPanel">
+          <div class="results-header">
+            <div>
+              <span class="section-kicker">04 / 执行与解释</span>
+              <h2>筛选结果</h2>
+            </div>
+            <div class="results-actions"><span class="run-meta"><span class="status-dot green"></span> 运行完成 · 2026-10-12 15:02 · 6.4s</span><button class="secondary-button" id="saveButton">保存策略</button><button class="secondary-button" id="monitorButton">创建监控</button></div>
+          </div>
+          <div class="result-summary">
+            <div class="summary-card selected-summary"><span class="summary-label">入选</span><strong>4</strong><span>通过全部硬条件</span></div>
+            <div class="summary-card excluded-summary"><span class="summary-label">排除</span><strong>3</strong><span>至少一个条件未满足</span></div>
+            <div class="summary-card unknown-summary"><span class="summary-label">未知</span><strong>2</strong><span>数据不足或接口异常</span></div>
+            <div class="summary-card data-summary"><span class="summary-label">数据质量</span><strong>92<span>%</span></strong><span>字段可追溯率</span></div>
+          </div>
+
+          <div class="result-layout">
+            <div class="result-list-area">
+              <div class="tab-row"><button class="tab-button active" data-tab="selected">入选 <span>4</span></button><button class="tab-button" data-tab="excluded">排除 <span>3</span></button><button class="tab-button" data-tab="unknown">数据质量 <span>2</span></button></div>
+              <div class="table-wrap">
+                <table class="stock-table">
+                  <thead><tr><th>证券</th><th>经营改善</th><th>估值</th><th>走势稳定</th><th>数据时点</th><th></th></tr></thead>
+                  <tbody id="stockTableBody"></tbody>
+                </table>
+              </div>
+              <div class="list-footnote"><span class="status-dot amber"></span> 结果基于演示快照；实际接入供应商后需替换数据适配器并保留原始响应。</div>
+            </div>
+            <aside class="evidence-panel" id="evidencePanel">
+              <div class="evidence-heading"><div><span class="section-kicker">证据账本</span><h3 id="evidenceTitle">贵州茅台 <span>600519.SH</span></h3></div><button class="close-evidence" id="closeEvidence">×</button></div>
+              <div class="evidence-status"><span class="status-dot green"></span><strong id="evidenceStatus">入选</strong><span>5 / 5 条件通过</span></div>
+              <p id="evidenceSummary">经营改善与估值条件均满足当前策略口径，波动率处于控制范围内。</p>
+              <div class="evidence-facts" id="evidenceFacts"></div>
+              <div class="evidence-source"><span class="source-shield">✓</span><div><strong>来源与时点</strong><span id="evidenceSource">扶摇演示快照 · 2026-10-12 · CNY / pct / x</span></div></div>
+              <button class="secondary-button full-width" id="viewRawEvidence">查看原始字段与计算过程</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="lower-grid">
+          <section class="panel whatif-panel">
+            <div class="section-heading"><div><span class="section-kicker">05 / What-if 影响分析</span><h2>改一个条件，结果怎么变？</h2></div><span class="impact-pill">可追溯 diff</span></div>
+            <div class="whatif-copy">将“归母净利润同比”从 <strong>10%</strong> 调整到 <strong id="whatIfValue">20%</strong>，比较策略版本 v1.3 → v1.4。</div>
+            <div class="impact-grid"><div><span>候选数量</span><strong>4 <b>→</b> 3</strong></div><div><span>新增排除</span><strong class="negative">1 只</strong></div><div><span>主因</span><strong class="impact-reason">利润增速不足</strong></div></div>
+            <div class="diff-row"><span class="diff-remove">−</span><div><strong>600036.SH 招商银行</strong><span>归母净利润同比 12.6% → 当前仍通过</span></div><span class="diff-status pass">保留</span></div>
+            <div class="diff-row"><span class="diff-remove">−</span><div><strong>600050.SH 中国联通</strong><span>归母净利润同比 8.4% <em>&lt; 20%</em></span></div><span class="diff-status fail">移除</span></div>
+            <button class="secondary-button full-width" id="applyWhatIf">应用到当前策略</button>
+          </section>
+          <section class="panel next-panel">
+            <div class="section-heading"><div><span class="section-kicker">06 / 下一步</span><h2>把一次筛选变成持续判断</h2></div></div>
+            <div class="next-action"><div class="next-icon">◷</div><div><strong>最小回测</strong><span>按历史快照回放，展示候选数量变化。当前 Demo 保留入口，未伪造收益结果。</span></div><button class="outline-button" id="backtestButton">查看入口</button></div>
+            <div class="next-action"><div class="next-icon">⌁</div><div><strong>条件监控</strong><span>当财报、估值或波动率条件变化时，提示触发条件与数据来源。</span></div><button class="outline-button" id="monitorButton2">创建任务</button></div>
+            <div class="next-action"><div class="next-icon">▣</div><div><strong>策略版本</strong><span>保存 v1.3，之后的每次修改都可回看、比较和回滚。</span></div><button class="outline-button" id="versionButton">查看版本</button></div>
+          </section>
+        </section>
+
+        <footer class="footer-note"><span>Demo 说明</span> 本产品展示“条件筛选与证据解释”，不提供确定性涨跌预测、收益承诺或直接买卖建议。演示快照仅用于体验主链路。</footer>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+    <div class="modal-backdrop" id="modalBackdrop" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" id="modalClose">×</button>
+        <span class="section-kicker">产品边界</span>
+        <h2 id="modalTitle">为什么结果里会出现“未知”？</h2>
+        <p>“未知”代表系统拿不到足够可靠的数据来判断条件，例如字段缺失、窗口不足、接口失败或来源冲突。它不会被静默算成通过或排除。</p>
+        <div class="modal-list"><div><b>AI</b><span>理解自然语言、解释定义、提出澄清问题。</span></div><div><b>确定性引擎</b><span>校验条件、计算指标、执行过滤、生成状态。</span></div><div><b>数据适配器</b><span>提供字段、来源、时点、单位和质量状态。</span></div></div>
+        <button class="primary-button full-width" id="modalDone">知道了</button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
